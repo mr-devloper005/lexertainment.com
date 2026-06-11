@@ -8,39 +8,13 @@ import { EditableContactLeadForm } from '@/editable/components/EditableContactLe
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
 
 function getTone(kind: ReturnType<typeof getProductKind>) {
-  if (kind === 'directory') {
-    return {
-      shell: 'bg-[#f8fbff] text-slate-950',
-      panel: 'border border-slate-200 bg-white',
-      soft: 'border border-slate-200 bg-slate-50',
-      muted: 'text-slate-600',
-      action: 'bg-slate-950 text-white hover:bg-slate-800',
-    }
-  }
-  if (kind === 'editorial') {
-    return {
-      shell: 'bg-[#fbf6ee] text-[#241711]',
-      panel: 'border border-[#dcc8b7] bg-[#fffdfa]',
-      soft: 'border border-[#e6d6c8] bg-[#fff4e8]',
-      muted: 'text-[#6e5547]',
-      action: 'bg-[#241711] text-[#fff1e2] hover:bg-[#3a241b]',
-    }
-  }
-  if (kind === 'visual') {
-    return {
-      shell: 'bg-[#07101f] text-white',
-      panel: 'border border-white/10 bg-white/6',
-      soft: 'border border-white/10 bg-white/5',
-      muted: 'text-slate-300',
-      action: 'bg-[#8df0c8] text-[#07111f] hover:bg-[#77dfb8]',
-    }
-  }
+  void kind
   return {
-    shell: 'bg-[#f7f1ea] text-[#261811]',
-    panel: 'border border-[#ddcdbd] bg-[#fffaf4]',
-    soft: 'border border-[#e8dbce] bg-[#f3e8db]',
-    muted: 'text-[#71574a]',
-    action: 'bg-[#5b2b3b] text-[#fff0f5] hover:bg-[#74364b]',
+    shell: 'bg-[#f6efe4] text-[#214c38]',
+    panel: 'border border-[#d8d0c4] bg-[#fffaf1]',
+    soft: 'border border-[#d8d0c4] bg-[#fffaf1]',
+    muted: 'text-[#70766c]',
+    action: 'bg-[#f6595b] text-white hover:bg-[#e84c4e]',
   }
 }
 
@@ -76,7 +50,7 @@ export default function ContactPage() {
 
   return (
     <EditableSiteShell className={tone.shell}>
-      <main className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-[var(--editable-container)] px-4 py-14 sm:px-6 lg:px-8">
         <section className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] opacity-70">{pagesContent.contact.eyebrow}</p>
