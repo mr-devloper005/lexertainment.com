@@ -1,13 +1,13 @@
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, Bookmark, Building2, Camera, CheckCircle2, Download, ExternalLink, FileText, Globe2, Mail, MapPin, MessageCircle, Phone, Tag, UserRound } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Bookmark, Building2, CheckCircle2, Download, ExternalLink, FileText, Globe2, Mail, MapPin, MessageCircle, Phone, Tag, UserRound } from 'lucide-react'
 import { buildPostMetadata, buildTaskMetadata } from '@/lib/seo'
 import { buildPostUrl, fetchArticleComments, fetchTaskPostBySlug, fetchTaskPosts } from '@/lib/task-data'
 import { getTaskConfig, SITE_CONFIG, type TaskKey } from '@/lib/site-config'
 import type { SitePost } from '@/lib/site-connector'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
-import { getVisualPreset, visualSystem } from '@/editable/theme/visual-system'
+import { ImageDetailGallery } from '@/editable/components/ImageDetailGallery'
 
 export const revalidate = 3
 
@@ -149,8 +149,7 @@ const mapSrcFor = (post: SitePost) => {
 }
 
 export function TaskDetailView({ task, post, related, comments = [] }: { task: TaskKey; post: SitePost; related: SitePost[]; comments?: Array<{ id: string; name: string; comment: string; createdAt: string }> }) {
-  const preset = getVisualPreset(visualSystem.recommendedPreset as any)
-  const detailVars = { '--detail-bg': preset.colors.background, '--detail-text': preset.colors.foreground, '--detail-surface': preset.colors.surface, '--detail-accent': preset.colors.accent } as CSSProperties
+  const detailVars = { '--detail-bg': '#f6efe4', '--detail-text': '#214c38', '--detail-surface': '#fffaf1', '--detail-accent': '#f6595b' } as CSSProperties
 
   return (
     <EditableSiteShell>
@@ -232,7 +231,6 @@ function ListingDetail({ post, related }: { post: SitePost; related: SitePost[] 
 
 function ClassifiedDetail({ post, related }: { post: SitePost; related: SitePost[] }) {
   const images = getImages(post)
-  const price = getField(post, ['price', 'amount', 'budget'])
   const location = cleanAddressField(post, ['location', 'address', 'city'])
   const condition = getField(post, ['condition', 'availability', 'type'])
   const phone = getField(post, ['phone', 'telephone', 'mobile'])
@@ -245,7 +243,6 @@ function ClassifiedDetail({ post, related }: { post: SitePost; related: SitePost
         <p className="mt-10 text-xs font-black uppercase tracking-[0.28em] opacity-60">Classified notice</p>
         <h1 className="mt-4 text-4xl font-black leading-[0.98] tracking-[-0.07em] sm:text-5xl">{post.title}</h1>
         <div className="mt-8 grid gap-3">
-          {price ? <BadgeLine label="Price" value={price} /> : null}
           {condition ? <BadgeLine label="Condition" value={condition} /> : null}
           {location ? <BadgeLine label="Location" value={location} /> : null}
         </div>
@@ -268,29 +265,81 @@ function ImageDetail({ post, related }: { post: SitePost; related: SitePost[] })
   const images = getImages(post)
   const website = getField(post, ['website', 'url', 'targetUrl', 'sourceUrl', 'link'])
   return (
-    <section className="mx-auto max-w-[var(--editable-container)] px-4 py-8 text-[#f8fafc] sm:px-6 lg:px-8 lg:py-14">
-      <BackLink task="image" />
-      <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(360px,0.78fr)_1.22fr]">
-        <aside className="rounded-[2.5rem] border border-white/10 bg-[#f8fafc] p-7 text-[#101828] shadow-[0_26px_90px_rgba(0,0,0,0.28)] lg:sticky lg:top-24 lg:self-start">
-          <div className="inline-flex items-center gap-2 rounded-full bg-[#101828] px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white"><Camera className="h-4 w-4" /> Image story</div>
-          <h1 className="mt-6 text-4xl font-black leading-[0.98] tracking-[-0.07em] text-[#0b1220] sm:text-5xl">{post.title}</h1>
-          {summaryText(post) ? <p className="mt-5 text-base font-semibold leading-8 text-[#475467]">{summaryText(post)}</p> : null}
-          <BodyContent post={post} compact tone="light" />
-          {website ? <Link href={website} target="_blank" rel="noreferrer" className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#ff6b35] px-5 py-3 text-sm font-black text-white shadow-[0_12px_30px_rgba(255,107,53,0.28)]">Visit target page <ExternalLink className="h-4 w-4" /></Link> : null}
-        </aside>
-        <div className="rounded-[2.5rem] border border-white/10 bg-[#101828] p-3 shadow-[0_26px_90px_rgba(0,0,0,0.22)] sm:p-4">
-          <div className="columns-1 gap-4 space-y-4 md:columns-2">
-            {(images.length ? images : ['/placeholder.svg?height=900&width=1200']).map((image, index) => (
-              <figure key={`${image}-${index}`} className="break-inside-avoid overflow-hidden rounded-[1.7rem] border border-white/12 bg-white/8 shadow-sm">
-                <img src={image} alt="" className="w-full object-cover" />
-                {index === 0 ? <figcaption className="p-5 text-sm font-bold !text-[#475467]">Featured visual from this image post.</figcaption> : null}
-              </figure>
-            ))}
-          </div>
+    <>
+      <section className="editable-soap-band relative overflow-hidden bg-[#214c38] px-4 py-24 text-white sm:px-6 lg:px-8">
+        <div className="absolute inset-0 opacity-25">
+          <img src={(images.length ? images[0] : '/placeholder.svg?height=900&width=1200')} alt="" className="h-full w-full object-cover" />
         </div>
-      </div>
-      <div className="mt-10 text-[#101828]"><RelatedPanel task="image" post={post} related={related} /></div>
-    </section>
+        <div className="relative mx-auto max-w-[var(--editable-container)] text-center">
+          <div className="text-sm font-black"><Link href="/">Home</Link> <span className="mx-2 text-white/45">&gt;</span> <Link href="/image">Images</Link> <span className="mx-2 text-white/45">&gt;</span> <span className="text-[#f6595b]">{post.title}</span></div>
+        </div>
+      </section>
+      <section className="mx-auto max-w-[var(--editable-container)] px-4 py-16 text-[#214c38] sm:px-6 lg:px-8">
+        <BackLink task="image" />
+        <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_0.95fr]">
+          <ImageDetailGallery images={images} title={post.title} />
+          <aside>
+            <div className="flex items-center justify-between gap-4">
+              <h1 className="text-4xl font-black leading-tight sm:text-5xl">{post.title}</h1>
+              
+            </div>
+            <div className="mt-2 text-[#f7bd42]">★★★★★ <span className="text-sm font-bold text-[#8b8c82]">(1)</span></div>
+            
+            <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+              <Link href="/contact" className="inline-flex h-14 flex-1 items-center justify-center rounded-full bg-[#f6595b] px-8 text-sm font-black uppercase text-white">Contact us</Link>
+              {website ? <Link href={website} target="_blank" rel="noreferrer" className="inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-full bg-[#214c38] px-8 text-sm font-black uppercase text-white">Open source <ExternalLink className="h-4 w-4" /></Link> : null}
+            </div>
+            <div className="mt-8 flex flex-wrap gap-5 text-sm font-black"></div>
+
+              <span>Share</span>
+              <div className="flex items-center gap-3">
+                
+                <Link href={`https://www.facebook.com?u=${encodeURIComponent(buildPostUrl('image', post.slug))}`} target="_blank" rel="noreferrer" className="rounded-full bg-[#3b5998] p-2 text-white"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4"><path d="M22.675 0H1.325C.593 0 0 .593 0 1.326v21.348C0 23.407.593 24 1.325 24h11.495v-9.294H9.691v-3.622h3.129V8.413c0-3.1 1.894-4.788 4.659-4.788 1.325 0
+  2.466.099 2.797.143v3.24l-1.918.001c-1.504 0-1.796.715-1.796 1.763v2.313h3.59l-.467 3.622h-3.123V24h6.116C23.407 24 24 23.407 24 22.674V1.326C24 .593 23.407 0 22.675 0z" /></svg></Link>
+  <div className="flex items-center gap-3">
+    <Link href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(buildPostUrl('image', post.slug))}&text=${encodeURIComponent(post.title)}`} target="_blank" rel="noreferrer" className="rounded-full bg-[#1da1f2] p-2 text-white"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4"><path d="M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.574 2.163-2.723-.949.555-2.005.959-3.127 1.184-.897-.959-2.178-1.559-3.594-1.559-2.717 0 2.466 2.248-2.466 5.017 0 .39.045.765.127 1.124-4.094-.205-7.725-2.165-10.156-5.144-.424.722-.666 1.561-.666 2.457 0 1.694.863 3.188 2.173 4.065-.802-.026-1.556-.246-2.214-.616v.062c0 2.367 1.683 4.342 3.918 4.787-.41.111-.843.171-1.29.171-.315 0-.623-.03-.923-.086.623 1.943 2.432 3.356 4.576 3.394-1.676 1.313-3.787 2.096-6.077 2.096-.394 0-.779-.023-1.161-.067C2.179 19.29 4.768 20 7.548 20c9.057 0 14-7.496 14-13.986 0-.21-.005-.423-.015-.633A99368e6 99368e6 0 0024 4.59z" /></svg></Link>
+              </div>
+            
+            </div>
+            <div className="mt-8 border-y border-[#d8d0c4] py-6 text-sm leading-8 text-[#7a7c72]">
+              <p><strong className="text-[#214c38]">Categories:</strong> {categoryOf(post, 'Image')}, Visual Stories</p>
+              <p><strong className="text-[#214c38]">Tags:</strong> Handmade, Nature</p>
+            </div>
+          </aside>
+        </div>
+        <div className="mt-16 rounded-[0.9rem] border border-[#d8d0c4] bg-[#fffaf1] p-8 sm:p-12">
+          <div className="flex flex-wrap gap-8 border-b border-[#d8d0c4] pb-4 text-xl font-black">
+            <span className="text-[#f6595b]">Description</span>
+            
+          </div>
+          <BodyContent post={post} />
+        </div>
+        <div className="mt-20">
+          <h2 className="text-center text-4xl font-black">Related Stories</h2>
+          <RelatedProductGrid task="image" related={related} />
+        </div>
+      </section>
+    </>
+  )
+}
+
+function RelatedProductGrid({ task, related }: { task: TaskKey; related: SitePost[] }) {
+  if (!related.length) return null
+  return (
+    <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      {related.slice(0, 4).map((item) => {
+        const image = getImages(item)[0] || '/placeholder.svg?height=900&width=1200'
+        return (
+          <Link key={item.id || item.slug} href={buildPostUrl(task, item.slug)} className="group text-center">
+            <div className="editable-soap-lift rounded-[0.8rem] bg-[#f2ece5] p-6">
+              <img src={image} alt="" className="mx-auto aspect-square w-full object-contain transition duration-500 group-hover:scale-105" />
+            </div>
+            <h3 className="mt-4 line-clamp-1 text-lg font-black">{item.title}</h3>
+            <p className="mt-3 text-[#d7d2c8]">☆☆☆☆☆</p>
+          </Link>
+        )
+      })}
+    </div>
   )
 }
 
