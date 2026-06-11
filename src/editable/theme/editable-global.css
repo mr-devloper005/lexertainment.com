@@ -15,6 +15,7 @@ body {
   background-color: var(--slot4-page-bg) !important;
   color: var(--slot4-page-text) !important;
   background-image: var(--slot4-body-gradient) !important;
+  overflow-x: hidden;
 }
 
 ::selection {
@@ -41,4 +42,64 @@ body {
 
 .article-content a {
   color: var(--slot4-accent-fill);
+}
+
+.editable-soap-band {
+  border-radius: 0 0 5.5rem 5.5rem;
+}
+
+.editable-soap-lift {
+  transition: transform 320ms ease, box-shadow 320ms ease, opacity 320ms ease;
+}
+
+.editable-soap-lift:hover {
+  transform: translateY(-8px);
+}
+
+.editable-auto-track {
+  animation: editable-marquee 34s linear infinite;
+}
+
+.editable-auto-track:hover {
+  animation-play-state: paused;
+}
+
+.editable-float-a {
+  animation: editable-float-a 6s ease-in-out infinite;
+}
+
+.editable-float-b {
+  animation: editable-float-b 8s ease-in-out infinite;
+}
+
+.editable-parallax-slow {
+  transform: translateY(var(--slot4-scroll-shift, 0));
+}
+
+@keyframes editable-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes editable-float-a {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(-5deg); }
+  50% { transform: translate3d(0, -18px, 0) rotate(3deg); }
+}
+
+@keyframes editable-float-b {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(4deg); }
+  50% { transform: translate3d(14px, 12px, 0) rotate(-3deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editable-auto-track,
+  .editable-float-a,
+  .editable-float-b {
+    animation: none;
+  }
+
+  .editable-soap-lift,
+  .editable-soap-lift:hover {
+    transform: none;
+  }
 }
